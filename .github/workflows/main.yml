@@ -48,16 +48,14 @@ jobs:
         }
 
     - name: Create output directories
-      shell: pwsh
       run: |
-        if (-not (Test-Path "dist")) { New-Item -ItemType Directory -Path "dist" }
-        if (-not (Test-Path "build")) { New-Item -ItemType Directory -Path "build" }
+        mkdir dist 2>nul
+        mkdir build 2>nul
 
     - name: Build executable with PyInstaller
       shell: pwsh
       run: |
         pyinstaller --onefile --windowed `
-          --icon=installer/resources/app_icon.ico `
           --name=EnterpriseDataCollector `
           --version-file=installer/version_info.txt `
           --add-data "installer/resources;resources" `
@@ -107,7 +105,7 @@ jobs:
         Get-ChildItem
         Write-Host "Dist directory contents:"
         Get-ChildItem dist
-        Write-Host "Creating NSIS installer..."
+        Write-Host "Installing NSIS script..."
         $makensis = "C:\Program Files (x86)\NSIS\makensis.exe"
         if (Test-Path $makensis) {
           & $makensis /DVERSION=2.0 /DAPP_NAME="Enterprise Data Collector" /DOUTPUT_FILENAME="EnterpriseDataCollector_v2.0_setup.exe" installer/installer.nsi
@@ -126,29 +124,24 @@ jobs:
       shell: pwsh
       run: |
         Write-Host "Creating portable ZIP archive..."
+        # Wait a moment for file operations to complete
         Start-Sleep -Seconds 2
         try {
-          $tempDir = "EnterpriseDataCollector_Portable"
-          New-Item -ItemType Directory -Path $tempDir -Force
-          Copy-Item "dist\EnterpriseDataCollector.exe" -Destination "$tempDir\"
-          
+          # Create README for portable version
           $readmeContent = "Enterprise Data Collector v2.0 - Portable Version`n`n" +
                           "INSTALLATION:`n" +
-                          "1. Extract this ZIP file to any folder`n" +
-                          "2. Run EnterpriseDataCollector.exe`n" +
-                          "3. No installation required!`n`n" +
+                          "1. Extract all files to a folder of your choice`n" +
+                          "2. Run EnterpriseDataCollector.exe`n`n" +
                           "REQUIREMENTS:`n" +
                           "- Windows 10/11 (64-bit)`n" +
-                          "- No additional software needed (all dependencies included)`n`n" +
+                          "- No additional installation required`n`n" +
                           "SUPPORT:`n" +
-                          "For technical support, please visit our GitHub repository.`n`n" +
-                          "Made with love for Vietnamese enterprises"
+                          "For technical support, please contact the development team.`n`n" +
+                          "Made with ❤️ for Vietnamese enterprises"
           
-          $readmeContent | Out-File -FilePath "$tempDir\README.txt" -Encoding UTF8
+          Set-Content -Path "dist\README.txt" -Value $readmeContent -Encoding UTF8
           
-          Compress-Archive -Path "$tempDir\*" -DestinationPath "EnterpriseDataCollector_v2.0_portable.zip" -Force
-          Remove-Item $tempDir -Recurse -Force
-          
+          Compress-Archive -Path "dist\*" -DestinationPath "EnterpriseDataCollector_v2.0_portable.zip" -Force
           if (Test-Path "EnterpriseDataCollector_v2.0_portable.zip") {
             Write-Host "✅ Portable archive created successfully!"
           } else {
@@ -222,6 +215,6 @@ jobs:
           - Commit: ${{ github.sha }}
           - Run: #${{ github.run_number }}
 
-          Made with love for Vietnamese enterprises
+          Made with ❤️ for Vietnamese enterprises
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
