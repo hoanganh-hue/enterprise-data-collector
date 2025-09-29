@@ -1,0 +1,8 @@
+[DEMO] This would be the compiled EnterpriseDataCollector.exe
+Size: ~50MB (typical for PyInstaller bundled app)
+Contains: Python runtime + all dependencies + application code
+
+To create the actual executable, run on Windows:
+1. Install Python 3.8+
+2. Run: pip install pyinstaller
+3. Run: pyinstaller installer/build_exe.spec --clean --noconfirm

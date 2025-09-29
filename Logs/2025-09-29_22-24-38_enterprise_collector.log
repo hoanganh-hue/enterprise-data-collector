@@ -1,0 +1,103 @@
+2025-09-29 22:24:38 - DebugAPI - INFO - Log file created: Logs/2025-09-29_22-24-38_enterprise_collector.log
+2025-09-29 22:24:38 - DebugAPI - INFO - Logger 'DebugAPI' initialized with level DEBUG
+2025-09-29 22:24:38 - DebugAPI - INFO - Starting API debug...
+2025-09-29 22:24:38 - DebugAPI - INFO - Testing cities API...
+2025-09-29 22:24:38 - DebugAPI - DEBUG - Making request to https://thongtindoanhnghiep.co/api/city with params: None
+2025-09-29 22:24:38 - DebugAPI - DEBUG - Cached response for https://thongtindoanhnghiep.co/api/city
+2025-09-29 22:24:38 - DebugAPI - INFO - Successfully requested https://thongtindoanhnghiep.co/api/city
+2025-09-29 22:24:38 - DebugAPI - INFO - Retrieved 64 cities
+2025-09-29 22:24:38 - DebugAPI - INFO - Found 64 cities
+2025-09-29 22:24:38 - DebugAPI - INFO - Found Hanoi city: Hà Nội -> ha-noi
+2025-09-29 22:24:38 - DebugAPI - INFO - Testing industries API...
+2025-09-29 22:24:38 - DebugAPI - DEBUG - Rate limiting: sleeping for 1.00s
+2025-09-29 22:24:39 - DebugAPI - DEBUG - Making request to https://thongtindoanhnghiep.co/api/industry with params: None
+2025-09-29 22:24:42 - DebugAPI - DEBUG - Cached response for https://thongtindoanhnghiep.co/api/industry
+2025-09-29 22:24:42 - DebugAPI - INFO - Successfully requested https://thongtindoanhnghiep.co/api/industry
+2025-09-29 22:24:42 - DebugAPI - INFO - Retrieved 933 industries
+2025-09-29 22:24:42 - DebugAPI - INFO - Found 933 industries
+2025-09-29 22:24:42 - DebugAPI - INFO - Found construction industry: Sản xuất đồ gỗ xây dựng -> nganh-nghe/san-xuat-do-go-xay-dung
+2025-09-29 22:24:42 - DebugAPI - INFO - 
+--- Testing: Hà Nội + Xây Dựng ---
+2025-09-29 22:24:42 - DebugAPI - INFO - Location: ha-noi, Industry: nganh-nghe/xay-dung
+2025-09-29 22:24:42 - DebugAPI - DEBUG - Rate limiting: sleeping for 0.99s
+2025-09-29 22:24:43 - DebugAPI - DEBUG - Making request to https://thongtindoanhnghiep.co/api/company with params: {'p': 1, 'r': 5, 'l': 'ha-noi', 'i': 'nganh-nghe/xay-dung'}
+2025-09-29 22:24:43 - DebugAPI - INFO - Successfully requested https://thongtindoanhnghiep.co/api/company
+2025-09-29 22:24:43 - DebugAPI - INFO - Raw API response keys: ['HtmlPage', 'Title', 'Description', 'Keyword', 'SolrID', 'Option', 'LtsMaps', 'TitleFacet', 'LtsFacets', 'LtsFacetOption', 'LtsFacetNganhNgheKinhDoanh', 'LtsItems']
+2025-09-29 22:24:43 - DebugAPI - INFO - LtsDoanhNghiep length: 0
+2025-09-29 22:24:43 - DebugAPI - WARNING - LtsDoanhNghiep is empty!
+2025-09-29 22:24:43 - DebugAPI - INFO - Total companies available: 282046
+2025-09-29 22:24:43 - DebugAPI - DEBUG - Rate limiting: sleeping for 1.00s
+2025-09-29 22:24:44 - DebugAPI - DEBUG - Making request to https://thongtindoanhnghiep.co/api/company with params: {'p': 1, 'r': 5, 'l': 'ha-noi', 'i': 'nganh-nghe/xay-dung'}
+2025-09-29 22:24:44 - DebugAPI - INFO - Successfully requested https://thongtindoanhnghiep.co/api/company
+2025-09-29 22:24:44 - DebugAPI - INFO - Search found 282046 companies, page 1/56410
+2025-09-29 22:24:44 - DebugAPI - INFO - Search result - Total: 282046, Items: 5
+2025-09-29 22:24:44 - DebugAPI - INFO - First item: MST=0109742634, Name=Công Ty Trách Nhiệm Hữu Hạn Công Nghệ Giáo Dục Azota
+2025-09-29 22:24:44 - DebugAPI - DEBUG - Rate limiting: sleeping for 1.00s
+2025-09-29 22:24:45 - DebugAPI - DEBUG - Making request to https://thongtindoanhnghiep.co/api/company/0109742634 with params: None
+2025-09-29 22:24:46 - DebugAPI - INFO - Successfully requested https://thongtindoanhnghiep.co/api/company/0109742634
+2025-09-29 22:24:46 - DebugAPI - INFO - Retrieved company details for 0109742634
+2025-09-29 22:24:46 - DebugAPI - INFO - Got details for 0109742634: Công Ty Trách Nhiệm Hữu Hạn Công Nghệ Giáo Dục Azota
+2025-09-29 22:24:46 - DebugAPI - INFO - 
+--- Testing: All locations + Xây Dựng ---
+2025-09-29 22:24:46 - DebugAPI - INFO - Location: None, Industry: nganh-nghe/xay-dung
+2025-09-29 22:24:46 - DebugAPI - DEBUG - Rate limiting: sleeping for 1.00s
+2025-09-29 22:24:47 - DebugAPI - DEBUG - Making request to https://thongtindoanhnghiep.co/api/company with params: {'p': 1, 'r': 5, 'i': 'nganh-nghe/xay-dung'}
+2025-09-29 22:24:47 - DebugAPI - INFO - Successfully requested https://thongtindoanhnghiep.co/api/company
+2025-09-29 22:24:47 - DebugAPI - INFO - Raw API response keys: ['HtmlPage', 'Title', 'Description', 'Keyword', 'SolrID', 'Option', 'LtsMaps', 'TitleFacet', 'LtsFacets', 'LtsFacetOption', 'LtsFacetNganhNgheKinhDoanh', 'LtsItems']
+2025-09-29 22:24:47 - DebugAPI - INFO - LtsDoanhNghiep length: 0
+2025-09-29 22:24:47 - DebugAPI - WARNING - LtsDoanhNghiep is empty!
+2025-09-29 22:24:47 - DebugAPI - INFO - Total companies available: 1582403
+2025-09-29 22:24:47 - DebugAPI - DEBUG - Rate limiting: sleeping for 1.00s
+2025-09-29 22:24:48 - DebugAPI - DEBUG - Making request to https://thongtindoanhnghiep.co/api/company with params: {'p': 1, 'r': 5, 'i': 'nganh-nghe/xay-dung'}
+2025-09-29 22:24:48 - DebugAPI - INFO - Successfully requested https://thongtindoanhnghiep.co/api/company
+2025-09-29 22:24:48 - DebugAPI - INFO - Search found 1582403 companies, page 1/316481
+2025-09-29 22:24:48 - DebugAPI - INFO - Search result - Total: 1582403, Items: 5
+2025-09-29 22:24:48 - DebugAPI - INFO - First item: MST=0316957067, Name=Công Ty TNHH Xuất Nhập Khẩu Quỳnh My Food
+2025-09-29 22:24:48 - DebugAPI - DEBUG - Rate limiting: sleeping for 1.00s
+2025-09-29 22:24:49 - DebugAPI - DEBUG - Making request to https://thongtindoanhnghiep.co/api/company/0316957067 with params: None
+2025-09-29 22:24:50 - DebugAPI - INFO - Successfully requested https://thongtindoanhnghiep.co/api/company/0316957067
+2025-09-29 22:24:50 - DebugAPI - INFO - Retrieved company details for 0316957067
+2025-09-29 22:24:50 - DebugAPI - INFO - Got details for 0316957067: Công Ty TNHH Xuất Nhập Khẩu Quỳnh My Food
+2025-09-29 22:24:50 - DebugAPI - INFO - 
+--- Testing: Hà Nội + All industries ---
+2025-09-29 22:24:50 - DebugAPI - INFO - Location: ha-noi, Industry: None
+2025-09-29 22:24:50 - DebugAPI - DEBUG - Rate limiting: sleeping for 1.00s
+2025-09-29 22:24:51 - DebugAPI - DEBUG - Making request to https://thongtindoanhnghiep.co/api/company with params: {'p': 1, 'r': 5, 'l': 'ha-noi'}
+2025-09-29 22:24:51 - DebugAPI - INFO - Successfully requested https://thongtindoanhnghiep.co/api/company
+2025-09-29 22:24:51 - DebugAPI - INFO - Raw API response keys: ['HtmlPage', 'Title', 'Description', 'Keyword', 'SolrID', 'Option', 'LtsMaps', 'TitleFacet', 'LtsFacets', 'LtsFacetOption', 'LtsFacetNganhNgheKinhDoanh', 'LtsItems']
+2025-09-29 22:24:51 - DebugAPI - INFO - LtsDoanhNghiep length: 0
+2025-09-29 22:24:51 - DebugAPI - WARNING - LtsDoanhNghiep is empty!
+2025-09-29 22:24:51 - DebugAPI - INFO - Total companies available: 282046
+2025-09-29 22:24:51 - DebugAPI - DEBUG - Rate limiting: sleeping for 1.00s
+2025-09-29 22:24:52 - DebugAPI - DEBUG - Making request to https://thongtindoanhnghiep.co/api/company with params: {'p': 1, 'r': 5, 'l': 'ha-noi'}
+2025-09-29 22:24:52 - DebugAPI - INFO - Successfully requested https://thongtindoanhnghiep.co/api/company
+2025-09-29 22:24:52 - DebugAPI - INFO - Search found 282046 companies, page 1/56410
+2025-09-29 22:24:52 - DebugAPI - INFO - Search result - Total: 282046, Items: 5
+2025-09-29 22:24:52 - DebugAPI - INFO - First item: MST=0109742634, Name=Công Ty Trách Nhiệm Hữu Hạn Công Nghệ Giáo Dục Azota
+2025-09-29 22:24:52 - DebugAPI - DEBUG - Rate limiting: sleeping for 1.00s
+2025-09-29 22:24:53 - DebugAPI - DEBUG - Making request to https://thongtindoanhnghiep.co/api/company/0109742634 with params: None
+2025-09-29 22:24:53 - DebugAPI - INFO - Successfully requested https://thongtindoanhnghiep.co/api/company/0109742634
+2025-09-29 22:24:53 - DebugAPI - INFO - Retrieved company details for 0109742634
+2025-09-29 22:24:53 - DebugAPI - INFO - Got details for 0109742634: Công Ty Trách Nhiệm Hữu Hạn Công Nghệ Giáo Dục Azota
+2025-09-29 22:24:53 - DebugAPI - INFO - 
+--- Testing: Found city + Found industry ---
+2025-09-29 22:24:53 - DebugAPI - INFO - Location: ha-noi, Industry: nganh-nghe/san-xuat-do-go-xay-dung
+2025-09-29 22:24:53 - DebugAPI - DEBUG - Rate limiting: sleeping for 1.00s
+2025-09-29 22:24:54 - DebugAPI - DEBUG - Making request to https://thongtindoanhnghiep.co/api/company with params: {'p': 1, 'r': 5, 'l': 'ha-noi', 'i': 'nganh-nghe/san-xuat-do-go-xay-dung'}
+2025-09-29 22:24:55 - DebugAPI - INFO - Successfully requested https://thongtindoanhnghiep.co/api/company
+2025-09-29 22:24:55 - DebugAPI - INFO - Raw API response keys: ['HtmlPage', 'Title', 'Description', 'Keyword', 'SolrID', 'Option', 'LtsMaps', 'TitleFacet', 'LtsFacets', 'LtsFacetOption', 'LtsFacetNganhNgheKinhDoanh', 'LtsItems']
+2025-09-29 22:24:55 - DebugAPI - INFO - LtsDoanhNghiep length: 0
+2025-09-29 22:24:55 - DebugAPI - WARNING - LtsDoanhNghiep is empty!
+2025-09-29 22:24:55 - DebugAPI - INFO - Total companies available: 282046
+2025-09-29 22:24:55 - DebugAPI - DEBUG - Rate limiting: sleeping for 1.00s
+2025-09-29 22:24:56 - DebugAPI - DEBUG - Making request to https://thongtindoanhnghiep.co/api/company with params: {'p': 1, 'r': 5, 'l': 'ha-noi', 'i': 'nganh-nghe/san-xuat-do-go-xay-dung'}
+2025-09-29 22:24:56 - DebugAPI - INFO - Successfully requested https://thongtindoanhnghiep.co/api/company
+2025-09-29 22:24:56 - DebugAPI - INFO - Search found 282046 companies, page 1/56410
+2025-09-29 22:24:56 - DebugAPI - INFO - Search result - Total: 282046, Items: 5
+2025-09-29 22:24:56 - DebugAPI - INFO - First item: MST=0109742634, Name=Công Ty Trách Nhiệm Hữu Hạn Công Nghệ Giáo Dục Azota
+2025-09-29 22:24:56 - DebugAPI - DEBUG - Rate limiting: sleeping for 1.00s
+2025-09-29 22:24:57 - DebugAPI - DEBUG - Making request to https://thongtindoanhnghiep.co/api/company/0109742634 with params: None
+2025-09-29 22:24:57 - DebugAPI - INFO - Successfully requested https://thongtindoanhnghiep.co/api/company/0109742634
+2025-09-29 22:24:57 - DebugAPI - INFO - Retrieved company details for 0109742634
+2025-09-29 22:24:57 - DebugAPI - INFO - Got details for 0109742634: Công Ty Trách Nhiệm Hữu Hạn Công Nghệ Giáo Dục Azota
+2025-09-29 22:24:57 - DebugAPI - INFO - API client closed

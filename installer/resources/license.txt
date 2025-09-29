@@ -1,0 +1,33 @@
+SOFTWARE LICENSE AGREEMENT
+Enterprise Data Collector v2.0
+
+======================================================
+
+Copyright © 2024 MiniMax Agent. All rights reserved.
+
+This software is provided "AS IS" without warranty of any kind, either express or implied, including but not limited to the implied warranties of merchantability, fitness for a particular purpose, or non-infringement.
+
+GRANT OF LICENSE:
+You are granted a non-exclusive, non-transferable license to use this software for personal or commercial purposes, subject to the terms and conditions set forth herein.
+
+RESTRICTIONS:
+1. You may not reverse engineer, decompile, or disassemble the software.
+2. You may not redistribute or sell copies of the software without written permission.
+3. You may not remove or alter any copyright notices or proprietary legends.
+
+DATA COLLECTION:
+This software collects publicly available business information from external sources. Users are responsible for compliance with applicable laws and regulations regarding data collection and usage.
+
+LIABILITY:
+In no event shall MiniMax Agent be liable for any damages arising out of the use or inability to use this software, even if MiniMax Agent has been advised of the possibility of such damages.
+
+TERMINATION:
+This license is effective until terminated. Your rights under this license will terminate automatically without notice if you fail to comply with any terms herein.
+
+By installing and using this software, you acknowledge that you have read this agreement, understand it, and agree to be bound by its terms and conditions.
+
+======================================================
+MiniMax Agent
+Email: support@minimax-agent.com
+Date: 2024
+======================================================
