@@ -1,3 +1,5 @@
+# enterprise-data-collector
+>>>>>>> a08c093f6c5b72dff5e54cdd7ee912574004d7f2
 # Enterprise Data Collector v2.0
 
 **Thu thập dữ liệu doanh nghiệp từ nhiều nguồn với giao diện tiếng Việt**
@@ -5,14 +7,14 @@
 ## 🚀 Tính năng chính
 
 - ✅ **Dual-source data integration**: API + Web scraping
-- ✅ **Giao diện tiếng Việt**: Thân thiện và dễ sử dụng  
+- ✅ **Giao diện tiếng Việt**: Thân thiện và dễ sử dụng
 - ✅ **One-click installer**: Professional Windows installer
 - ✅ **Automated build**: GitHub Actions CI/CD
 - ✅ **100% accuracy**: Verified data collection
 
 ## 📦 Download
 
-Tải phiên bản mới nhất từ [Releases](https://github.com/minimax-enterprise/enterprise-data-collector/releases):
+Tải phiên bản mới nhất từ [Releases](https://github.com/hoanganh-hue/enterprise-data-collector/releases):
 
 - **EnterpriseDataCollector_v2.0_setup.exe** - Windows Installer (Khuyến nghị)
 - **Portable Version** - Không cần cài đặt
@@ -33,7 +35,7 @@ Tải phiên bản mới nhất từ [Releases](https://github.com/minimax-enter
 
 ### Cho developers:
 ```bash
-git clone https://github.com/minimax-enterprise/enterprise-data-collector.git
+git clone https://github.com/hoanganh-hue/enterprise-data-collector.git
 cd enterprise-data-collector
 pip install -r requirements.txt
 python main.py
@@ -58,10 +60,10 @@ Repository này sử dụng **GitHub Actions** để tự động build Windows 
 ## 📊 Dữ liệu thu thập
 
 - Tên doanh nghiệp
-- Mã số thuế  
+- Mã số thuế
 - Địa chỉ đầy đủ
 - **Người đại diện pháp luật**
-- **Số điện thoại người đại diện** 
+- **Số điện thoại người đại diện**
 - Ngành nghề kinh doanh
 - Trạng thái hoạt động
 
@@ -74,13 +76,12 @@ Repository này sử dụng **GitHub Actions** để tự động build Windows 
 
 ## 📞 Hỗ trợ
 
-- **Issues**: [GitHub Issues](https://github.com/minimax-enterprise/enterprise-data-collector/issues)
-- **Email**: support@minimax-agent.com
+- **Issues**: [GitHub Issues](https://github.com/hoanganh-hue/enterprise-data-collector/issues)
 - **Documentation**: Xem thư mục `docs/`
 
 ## 📄 License
 
-Copyright © 2024 MiniMax Agent. All rights reserved.
+Copyright © 2024 Hoang Anh. All rights reserved.
 
 ---
 
@@ -88,7 +89,10 @@ Copyright © 2024 MiniMax Agent. All rights reserved.
 
 ### v2.0.0 (2024-12-30)
 - ✅ Complete dual-source integration
-- ✅ Professional Windows installer  
+- ✅ Professional Windows installer
 - ✅ GitHub Actions automation
-- ✅ 100% data accuracy verification
+- ✅ 100% accuracy verification
 - ✅ Vietnamese UI/UX
+=======
+# enterprise-data-collector
+>>>>>>> a08c093f6c5b72dff5e54cdd7ee912574004d7f2
