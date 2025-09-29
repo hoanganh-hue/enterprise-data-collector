@@ -32,11 +32,11 @@ jobs:
         pip install pywin32
 
     - name: Create dist directory
-      run: mkdir -p dist
+      run: mkdir dist
 
     - name: Build executable with PyInstaller
       run: |
-        pyinstaller --onefile --windowed --icon=installer/resources/app_icon.ico --name=EnterpriseDataCollector --version-file=installer/version_info.txt --add-data="installer/resources;resources" --add-data="Database;Database" --add-data="browser;browser" --add-data="src;src" --add-data="external_api;external_api" main.py
+        pyinstaller --onefile --windowed --icon=installer/resources/app_icon.ico --name=EnterpriseDataCollector --version-file=installer/version_info.txt --add-data "installer/resources;resources" --add-data "Database;Database" --add-data "browser;browser" --add-data "src;src" --add-data "external_api;external_api" main.py
 
     - name: Create NSIS installer
       run: |
@@ -47,7 +47,7 @@ jobs:
       with:
         name: Windows Installer
         path: |
-          *.exe
+          EnterpriseDataCollector_v2.0_setup.exe
           dist/
 
     - name: Create Release
@@ -55,7 +55,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          *.exe
+          EnterpriseDataCollector_v2.0_setup.exe
         generate_release_notes: true
         tag_name: v2.0.${{ github.run_number }}
         name: Enterprise Data Collector v2.0
