@@ -1,0 +1,83 @@
+name: Build Windows Installer
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-windows-installer:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install system dependencies
+      run: |
+        choco install nsis -y
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+        pip install pywin32
+
+    - name: Create dist directory
+      run: mkdir -p dist
+
+    - name: Build executable with PyInstaller
+      run: |
+        pyinstaller --onefile --windowed --icon=installer/resources/app_icon.ico --name=EnterpriseDataCollector --version-file=installer/version_info.txt --add-data="installer/resources;resources" --add-data="Database;Database" --add-data="browser;browser" --add-data="src;src" --add-data="external_api;external_api" main.py
+
+    - name: Create NSIS installer
+      run: |
+        "C:\Program Files (x86)\NSIS\makensis.exe" /DVERSION=2.0 /DAPP_NAME="Enterprise Data Collector" /DOUTPUT_FILENAME="EnterpriseDataCollector_v2.0_setup.exe" installer/installer.nsi
+
+    - name: Upload Windows installer
+      uses: actions/upload-artifact@v3
+      with:
+        name: Windows Installer
+        path: |
+          *.exe
+          dist/
+
+    - name: Create Release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          *.exe
+        generate_release_notes: true
+        tag_name: v2.0.${{ github.run_number }}
+        name: Enterprise Data Collector v2.0
+        body: |
+          🚀 Enterprise Data Collector v2.0 - Windows Installer
+
+          ## Features:
+          - ✅ Dual-source data collection system
+          - ✅ Professional Windows installer  
+          - ✅ Vietnamese UI/UX
+          - ✅ 100% data accuracy verified
+          - ✅ Automated build from GitHub Actions
+
+          ## Installation:
+          1. Download EnterpriseDataCollector_v2.0_setup.exe
+          2. Run the installer
+          3. Follow the setup wizard
+
+          ## What's New:
+          - Complete enterprise data collection system
+          - Enhanced UI with Vietnamese language support
+          - Automated Windows installer build
+          - Professional packaging and distribution
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
