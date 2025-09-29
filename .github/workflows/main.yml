@@ -30,16 +30,63 @@ jobs:
         pip install -r requirements.txt
         pip install pyinstaller
         pip install pywin32
+        
+    - name: Install Playwright browsers
+      run: |
+        playwright install chromium
+        playwright install-deps
 
     - name: Create dist directory
       run: mkdir dist
 
     - name: Build executable with PyInstaller
       run: |
-        pyinstaller --onefile --windowed --icon=installer/resources/app_icon.ico --name=EnterpriseDataCollector --version-file=installer/version_info.txt --add-data "installer/resources;resources" --add-data "Database;Database" --add-data "browser;browser" --add-data "src;src" --add-data "external_api;external_api" main.py
+        pyinstaller --onefile --windowed ^
+          --icon=installer/resources/app_icon.ico ^
+          --name=EnterpriseDataCollector ^
+          --version-file=installer/version_info.txt ^
+          --add-data "installer/resources;resources" ^
+          --add-data "Database;Database" ^
+          --add-data "browser;browser" ^
+          --add-data "src;src" ^
+          --add-data "external_api;external_api" ^
+          --hidden-import=playwright ^
+          --hidden-import=playwright.sync_api ^
+          --hidden-import=playwright.async_api ^
+          --hidden-import=PyQt5 ^
+          --hidden-import=PyQt5.QtCore ^
+          --hidden-import=PyQt5.QtWidgets ^
+          --hidden-import=PyQt5.QtGui ^
+          --hidden-import=openpyxl ^
+          --hidden-import=pandas ^
+          --hidden-import=sqlite3 ^
+          --hidden-import=requests ^
+          --hidden-import=aiohttp ^
+          --hidden-import=beautifulsoup4 ^
+          --hidden-import=lxml ^
+          --collect-all=playwright ^
+          main.py
+
+    - name: Verify executable creation
+      run: |
+        echo "Checking if executable was created..."
+        dir dist
+        if exist "dist\EnterpriseDataCollector.exe" (
+          echo "✅ Executable created successfully!"
+          echo "File size:"
+          dir "dist\EnterpriseDataCollector.exe"
+        ) else (
+          echo "❌ Executable not found!"
+          echo "Build might have failed."
+          exit 1
+        )
 
     - name: Create NSIS installer
       run: |
+        echo "Current directory contents:"
+        dir
+        echo "Dist directory contents:"
+        dir dist
         "C:\Program Files (x86)\NSIS\makensis.exe" /DVERSION=2.0 /DAPP_NAME="Enterprise Data Collector" /DOUTPUT_FILENAME="EnterpriseDataCollector_v2.0_setup.exe" installer/installer.nsi
 
     - name: Upload Windows installer
