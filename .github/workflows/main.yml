@@ -48,37 +48,39 @@ jobs:
         }
 
     - name: Create output directories
+      shell: pwsh
       run: |
-        mkdir dist 2>nul
-        mkdir build 2>nul
+        if (-not (Test-Path "dist")) { New-Item -ItemType Directory -Path "dist" }
+        if (-not (Test-Path "build")) { New-Item -ItemType Directory -Path "build" }
 
     - name: Build executable with PyInstaller
+      shell: pwsh
       run: |
-        pyinstaller --onedir --windowed ^
-          --icon=installer/resources/app_icon.ico ^
-          --name=EnterpriseDataCollector ^
-          --version-file=installer/version_info.txt ^
-          --add-data "installer/resources;resources" ^
-          --add-data "Database;Database" ^
-          --add-data "browser;browser" ^
-          --add-data "src;src" ^
-          --add-data "external_api;external_api" ^
-          --hidden-import=playwright ^
-          --hidden-import=playwright.sync_api ^
-          --hidden-import=playwright.async_api ^
-          --hidden-import=PyQt5 ^
-          --hidden-import=PyQt5.QtCore ^
-          --hidden-import=PyQt5.QtWidgets ^
-          --hidden-import=PyQt5.QtGui ^
-          --hidden-import=openpyxl ^
-          --hidden-import=pandas ^
-          --hidden-import=sqlite3 ^
-          --hidden-import=requests ^
-          --hidden-import=aiohttp ^
-          --hidden-import=beautifulsoup4 ^
-          --hidden-import=lxml ^
-          --collect-all=playwright ^
-          --collect-all=PyQt5 ^
+        pyinstaller --onefile --windowed `
+          --icon=installer/resources/app_icon.ico `
+          --name=EnterpriseDataCollector `
+          --version-file=installer/version_info.txt `
+          --add-data "installer/resources;resources" `
+          --add-data "Database;Database" `
+          --add-data "browser;browser" `
+          --add-data "src;src" `
+          --add-data "external_api;external_api" `
+          --hidden-import=playwright `
+          --hidden-import=playwright.sync_api `
+          --hidden-import=playwright.async_api `
+          --hidden-import=PyQt5 `
+          --hidden-import=PyQt5.QtCore `
+          --hidden-import=PyQt5.QtWidgets `
+          --hidden-import=PyQt5.QtGui `
+          --hidden-import=openpyxl `
+          --hidden-import=pandas `
+          --hidden-import=sqlite3 `
+          --hidden-import=requests `
+          --hidden-import=aiohttp `
+          --hidden-import=beautifulsoup4 `
+          --hidden-import=lxml `
+          --collect-all=playwright `
+          --collect-all=PyQt5 `
           main.py
 
     - name: Verify executable creation
@@ -86,7 +88,7 @@ jobs:
       run: |
         Write-Host "Checking if executable was created..."
         Get-ChildItem dist
-        $exePath = "dist\EnterpriseDataCollector\EnterpriseDataCollector.exe"
+        $exePath = "dist\EnterpriseDataCollector.exe"
         if (Test-Path $exePath) {
           Write-Host "✅ Executable created successfully!"
           Write-Host "File size:"
@@ -105,7 +107,7 @@ jobs:
         Get-ChildItem
         Write-Host "Dist directory contents:"
         Get-ChildItem dist
-        Write-Host "Installing NSIS script..."
+        Write-Host "Creating NSIS installer..."
         $makensis = "C:\Program Files (x86)\NSIS\makensis.exe"
         if (Test-Path $makensis) {
           & $makensis /DVERSION=2.0 /DAPP_NAME="Enterprise Data Collector" /DOUTPUT_FILENAME="EnterpriseDataCollector_v2.0_setup.exe" installer/installer.nsi
@@ -127,7 +129,34 @@ jobs:
         # Wait a moment for file operations to complete
         Start-Sleep -Seconds 2
         try {
-          Compress-Archive -Path "dist\EnterpriseDataCollector\*" -DestinationPath "EnterpriseDataCollector_v2.0_portable.zip" -Force
+          # Copy the single executable to a temporary folder for zipping
+          $tempDir = "EnterpriseDataCollector_Portable"
+          New-Item -ItemType Directory -Path $tempDir -Force
+          Copy-Item "dist\EnterpriseDataCollector.exe" -Destination "$tempDir\"
+          
+          # Create README for portable version
+          $readmeContent = @"
+Enterprise Data Collector v2.0 - Portable Version
+
+INSTALLATION:
+1. Extract this ZIP file to any folder
+2. Run EnterpriseDataCollector.exe
+3. No installation required!
+
+REQUIREMENTS:
+- Windows 10/11 (64-bit)
+- No additional software needed (all dependencies included)
+
+SUPPORT:
+For technical support, please visit our GitHub repository.
+
+Made with ❤️ for Vietnamese enterprises
+"@
+          $readmeContent | Out-File -FilePath "$tempDir\README.txt" -Encoding UTF8
+          
+          Compress-Archive -Path "$tempDir\*" -DestinationPath "EnterpriseDataCollector_v2.0_portable.zip" -Force
+          Remove-Item $tempDir -Recurse -Force
+          
           if (Test-Path "EnterpriseDataCollector_v2.0_portable.zip") {
             Write-Host "✅ Portable archive created successfully!"
           } else {
