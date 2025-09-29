@@ -20,10 +20,6 @@ jobs:
       with:
         python-version: '3.9'
 
-    - name: Install system dependencies
-      run: |
-        choco install nsis -y
-
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
@@ -57,8 +53,6 @@ jobs:
       run: |
         pyinstaller --onefile --windowed `
           --name=EnterpriseDataCollector `
-          --version-file=installer/version_info.txt `
-          --add-data "installer/resources;resources" `
           --add-data "Database;Database" `
           --add-data "browser;browser" `
           --add-data "src;src" `
@@ -98,36 +92,12 @@ jobs:
           throw "Build failed!"
         }
 
-    - name: Create NSIS installer
-      shell: pwsh
-      run: |
-        Write-Host "Current directory contents:"
-        Get-ChildItem
-        Write-Host "Dist directory contents:"
-        Get-ChildItem dist
-        Write-Host "Installing NSIS script..."
-        $makensis = "C:\Program Files (x86)\NSIS\makensis.exe"
-        if (Test-Path $makensis) {
-          & $makensis /DVERSION=2.0 /DAPP_NAME="Enterprise Data Collector" /DOUTPUT_FILENAME="EnterpriseDataCollector_v2.0_setup.exe" installer/installer.nsi
-          if (Test-Path "EnterpriseDataCollector_v2.0_setup.exe") {
-            Write-Host "✅ Installer created successfully!"
-          } else {
-            Write-Host "❌ Installer creation failed!"
-            exit 1
-          }
-        } else {
-          Write-Host "❌ NSIS makensis.exe not found at expected path!"
-          exit 1
-        }
-
     - name: Create portable archive
       shell: pwsh
       run: |
         Write-Host "Creating portable ZIP archive..."
-        # Wait a moment for file operations to complete
         Start-Sleep -Seconds 2
         try {
-          # Create README for portable version
           $readmeContent = "Enterprise Data Collector v2.0 - Portable Version`n`n" +
                           "INSTALLATION:`n" +
                           "1. Extract all files to a folder of your choice`n" +
@@ -144,6 +114,8 @@ jobs:
           Compress-Archive -Path "dist\*" -DestinationPath "EnterpriseDataCollector_v2.0_portable.zip" -Force
           if (Test-Path "EnterpriseDataCollector_v2.0_portable.zip") {
             Write-Host "✅ Portable archive created successfully!"
+            $fileSize = (Get-Item "EnterpriseDataCollector_v2.0_portable.zip").Length
+            Write-Host "Archive size: $([math]::Round($fileSize/1MB, 2)) MB"
           } else {
             Write-Host "❌ Portable archive creation failed!"
           }
@@ -158,57 +130,57 @@ jobs:
         path: |
           dist/
           EnterpriseDataCollector_v2.0_portable.zip
-          EnterpriseDataCollector_v2.0_setup.exe
 
-    - name: List uploaded files
+    - name: List build results
       shell: pwsh
       run: |
-        Write-Host "=== Build Summary ==="
-        Write-Host "Uploaded artifacts:"
-        Get-ChildItem | Where-Object { $_.Name -match "^EnterpriseDataCollector_v2\.0|^dist$" }
-        Write-Host "=== Build Completed Successfully ==="
+        Write-Host "=== BUILD COMPLETED SUCCESSFULLY ==="
+        Write-Host "Generated files:"
+        if (Test-Path "dist\EnterpriseDataCollector.exe") {
+          $exeSize = (Get-Item "dist\EnterpriseDataCollector.exe").Length
+          Write-Host "✅ EnterpriseDataCollector.exe - $([math]::Round($exeSize/1MB, 2)) MB"
+        }
+        if (Test-Path "EnterpriseDataCollector_v2.0_portable.zip") {
+          $zipSize = (Get-Item "EnterpriseDataCollector_v2.0_portable.zip").Length  
+          Write-Host "✅ EnterpriseDataCollector_v2.0_portable.zip - $([math]::Round($zipSize/1MB, 2)) MB"
+        }
+        Write-Host "=== READY FOR DISTRIBUTION ==="
 
     - name: Create Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          EnterpriseDataCollector_v2.0_setup.exe
           EnterpriseDataCollector_v2.0_portable.zip
         generate_release_notes: true
         tag_name: v2.0.${{ github.run_number }}
         name: Enterprise Data Collector v2.0
         body: |
-          🚀 Enterprise Data Collector v2.0 - Professional Windows Release
+          🚀 Enterprise Data Collector v2.0 - Portable Windows Release
 
           ## ✨ Features:
           - ✅ Advanced dual-source data collection system
-          - ✅ Professional Windows NSIS installer
-          - ✅ Portable ZIP package
+          - ✅ Portable ZIP package (no installation required)
           - ✅ Vietnamese UI/UX optimized
           - ✅ 100% accuracy verified data collection
           - ✅ Automated build via GitHub Actions
           - ✅ All dependencies bundled
 
-          ## 📦 Installation Options:
+          ## 📦 Installation Instructions:
 
-          **Option 1: Windows Installer** (Recommended)
-          1. Download `EnterpriseDataCollector_v2.0_setup.exe`
-          2. Run the installer as administrator
-          3. Follow the setup wizard
-
-          **Option 2: Portable Version**
+          **Portable Version** (Recommended)
           1. Download `EnterpriseDataCollector_v2.0_portable.zip`
-          2. Extract the ZIP file
+          2. Extract the ZIP file to any folder
           3. Run `EnterpriseDataCollector.exe`
+          4. No additional installation required!
 
           ## 🔧 What's New:
           - Complete enterprise-grade data collection system
           - Enhanced Vietnamese language support
-          - Automated NSIS installer build pipeline
           - Professional packaging and distribution
           - PyInstaller bundled with all dependencies
           - Playwright browsers included
+          - Single executable file for easy deployment
 
           ## 🏗 Build Information:
           - Built on: ${{ github.run_date }}
