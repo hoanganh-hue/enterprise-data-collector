@@ -36,6 +36,13 @@ jobs:
         playwright install chromium
         playwright install-deps
 
+    - name: Remove existing dist directory (if any)
+      shell: pwsh
+      run: |
+        if (Test-Path "dist") {
+          Remove-Item "dist" -Recurse -Force
+        }
+
     - name: Create dist directory
       run: mkdir dist
 
@@ -75,7 +82,7 @@ jobs:
           echo "✅ Executable created successfully!"
           echo "File size:"
           dir "dist\EnterpriseDataCollector.exe"
-        ) else (
+         ) else (
           echo "❌ Executable not found!"
           echo "Build might have failed."
           exit 1
