@@ -126,32 +126,24 @@ jobs:
       shell: pwsh
       run: |
         Write-Host "Creating portable ZIP archive..."
-        # Wait a moment for file operations to complete
         Start-Sleep -Seconds 2
         try {
-          # Copy the single executable to a temporary folder for zipping
           $tempDir = "EnterpriseDataCollector_Portable"
           New-Item -ItemType Directory -Path $tempDir -Force
           Copy-Item "dist\EnterpriseDataCollector.exe" -Destination "$tempDir\"
           
-          # Create README for portable version
-          $readmeContent = @"
-Enterprise Data Collector v2.0 - Portable Version
-
-INSTALLATION:
-1. Extract this ZIP file to any folder
-2. Run EnterpriseDataCollector.exe
-3. No installation required!
-
-REQUIREMENTS:
-- Windows 10/11 (64-bit)
-- No additional software needed (all dependencies included)
-
-SUPPORT:
-For technical support, please visit our GitHub repository.
-
-Made with ❤️ for Vietnamese enterprises
-"@
+          $readmeContent = "Enterprise Data Collector v2.0 - Portable Version`n`n" +
+                          "INSTALLATION:`n" +
+                          "1. Extract this ZIP file to any folder`n" +
+                          "2. Run EnterpriseDataCollector.exe`n" +
+                          "3. No installation required!`n`n" +
+                          "REQUIREMENTS:`n" +
+                          "- Windows 10/11 (64-bit)`n" +
+                          "- No additional software needed (all dependencies included)`n`n" +
+                          "SUPPORT:`n" +
+                          "For technical support, please visit our GitHub repository.`n`n" +
+                          "Made with love for Vietnamese enterprises"
+          
           $readmeContent | Out-File -FilePath "$tempDir\README.txt" -Encoding UTF8
           
           Compress-Archive -Path "$tempDir\*" -DestinationPath "EnterpriseDataCollector_v2.0_portable.zip" -Force
@@ -230,6 +222,6 @@ Made with ❤️ for Vietnamese enterprises
           - Commit: ${{ github.sha }}
           - Run: #${{ github.run_number }}
 
-          Made with ❤️ for Vietnamese enterprises
+          Made with love for Vietnamese enterprises
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
