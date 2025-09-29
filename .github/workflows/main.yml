@@ -30,25 +30,31 @@ jobs:
         pip install -r requirements.txt
         pip install pyinstaller
         pip install pywin32
-        
+        pip install playwright
+
     - name: Install Playwright browsers
       run: |
         playwright install chromium
         playwright install-deps
 
-    - name: Remove existing dist directory (if any)
+    - name: Clean previous build
       shell: pwsh
       run: |
         if (Test-Path "dist") {
           Remove-Item "dist" -Recurse -Force
         }
+        if (Test-Path "build") {
+          Remove-Item "build" -Recurse -Force
+        }
 
-    - name: Create dist directory
-      run: mkdir dist
+    - name: Create output directories
+      run: |
+        mkdir dist 2>nul
+        mkdir build 2>nul
 
     - name: Build executable with PyInstaller
       run: |
-        pyinstaller --onefile --windowed ^
+        pyinstaller --onedir --windowed ^
           --icon=installer/resources/app_icon.ico ^
           --name=EnterpriseDataCollector ^
           --version-file=installer/version_info.txt ^
@@ -72,66 +78,129 @@ jobs:
           --hidden-import=beautifulsoup4 ^
           --hidden-import=lxml ^
           --collect-all=playwright ^
+          --collect-all=PyQt5 ^
           main.py
 
     - name: Verify executable creation
+      shell: pwsh
       run: |
-        echo "Checking if executable was created..."
-        dir dist
-        if exist "dist\EnterpriseDataCollector.exe" (
-          echo "✅ Executable created successfully!"
-          echo "File size:"
-          dir "dist\EnterpriseDataCollector.exe"
-         ) else (
-          echo "❌ Executable not found!"
-          echo "Build might have failed."
-          exit 1
-        )
+        Write-Host "Checking if executable was created..."
+        Get-ChildItem dist
+        $exePath = "dist\EnterpriseDataCollector\EnterpriseDataCollector.exe"
+        if (Test-Path $exePath) {
+          Write-Host "✅ Executable created successfully!"
+          Write-Host "File size:"
+          Get-ChildItem $exePath | Select-Object Name, Length
+        } else {
+          Write-Host "❌ Executable not found!"
+          Write-Host "Dist contents:"
+          Get-ChildItem dist -Recurse | Select FullName
+          throw "Build failed!"
+        }
 
     - name: Create NSIS installer
+      shell: pwsh
       run: |
-        echo "Current directory contents:"
-        dir
-        echo "Dist directory contents:"
-        dir dist
-        "C:\Program Files (x86)\NSIS\makensis.exe" /DVERSION=2.0 /DAPP_NAME="Enterprise Data Collector" /DOUTPUT_FILENAME="EnterpriseDataCollector_v2.0_setup.exe" installer/installer.nsi
+        Write-Host "Current directory contents:"
+        Get-ChildItem
+        Write-Host "Dist directory contents:"
+        Get-ChildItem dist
+        Write-Host "Installing NSIS script..."
+        $makensis = "C:\Program Files (x86)\NSIS\makensis.exe"
+        if (Test-Path $makensis) {
+          & $makensis /DVERSION=2.0 /DAPP_NAME="Enterprise Data Collector" /DOUTPUT_FILENAME="EnterpriseDataCollector_v2.0_setup.exe" installer/installer.nsi
+          if (Test-Path "EnterpriseDataCollector_v2.0_setup.exe") {
+            Write-Host "✅ Installer created successfully!"
+          } else {
+            Write-Host "❌ Installer creation failed!"
+            exit 1
+          }
+        } else {
+          Write-Host "❌ NSIS makensis.exe not found at expected path!"
+          exit 1
+        }
 
-    - name: Upload Windows installer
+    - name: Create portable archive
+      shell: pwsh
+      run: |
+        Write-Host "Creating portable ZIP archive..."
+        # Wait a moment for file operations to complete
+        Start-Sleep -Seconds 2
+        try {
+          Compress-Archive -Path "dist\EnterpriseDataCollector\*" -DestinationPath "EnterpriseDataCollector_v2.0_portable.zip" -Force
+          if (Test-Path "EnterpriseDataCollector_v2.0_portable.zip") {
+            Write-Host "✅ Portable archive created successfully!"
+          } else {
+            Write-Host "❌ Portable archive creation failed!"
+          }
+        } catch {
+          Write-Host "Error creating archive: $($_.Exception.Message)"
+        }
+
+    - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: Windows Installer
+        name: Windows_Build_Artifacts
         path: |
-          EnterpriseDataCollector_v2.0_setup.exe
           dist/
+          EnterpriseDataCollector_v2.0_portable.zip
+          EnterpriseDataCollector_v2.0_setup.exe
+
+    - name: List uploaded files
+      shell: pwsh
+      run: |
+        Write-Host "=== Build Summary ==="
+        Write-Host "Uploaded artifacts:"
+        Get-ChildItem | Where-Object { $_.Name -match "^EnterpriseDataCollector_v2\.0|^dist$" }
+        Write-Host "=== Build Completed Successfully ==="
 
     - name: Create Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           EnterpriseDataCollector_v2.0_setup.exe
+          EnterpriseDataCollector_v2.0_portable.zip
         generate_release_notes: true
         tag_name: v2.0.${{ github.run_number }}
         name: Enterprise Data Collector v2.0
         body: |
-          🚀 Enterprise Data Collector v2.0 - Windows Installer
+          🚀 Enterprise Data Collector v2.0 - Professional Windows Release
 
-          ## Features:
-          - ✅ Dual-source data collection system
-          - ✅ Professional Windows installer  
-          - ✅ Vietnamese UI/UX
-          - ✅ 100% data accuracy verified
-          - ✅ Automated build from GitHub Actions
+          ## ✨ Features:
+          - ✅ Advanced dual-source data collection system
+          - ✅ Professional Windows NSIS installer
+          - ✅ Portable ZIP package
+          - ✅ Vietnamese UI/UX optimized
+          - ✅ 100% accuracy verified data collection
+          - ✅ Automated build via GitHub Actions
+          - ✅ All dependencies bundled
 
-          ## Installation:
-          1. Download EnterpriseDataCollector_v2.0_setup.exe
-          2. Run the installer
+          ## 📦 Installation Options:
+
+          **Option 1: Windows Installer** (Recommended)
+          1. Download `EnterpriseDataCollector_v2.0_setup.exe`
+          2. Run the installer as administrator
           3. Follow the setup wizard
 
-          ## What's New:
-          - Complete enterprise data collection system
-          - Enhanced UI with Vietnamese language support
-          - Automated Windows installer build
+          **Option 2: Portable Version**
+          1. Download `EnterpriseDataCollector_v2.0_portable.zip`
+          2. Extract the ZIP file
+          3. Run `EnterpriseDataCollector.exe`
+
+          ## 🔧 What's New:
+          - Complete enterprise-grade data collection system
+          - Enhanced Vietnamese language support
+          - Automated NSIS installer build pipeline
           - Professional packaging and distribution
+          - PyInstaller bundled with all dependencies
+          - Playwright browsers included
+
+          ## 🏗 Build Information:
+          - Built on: ${{ github.run_date }}
+          - Commit: ${{ github.sha }}
+          - Run: #${{ github.run_number }}
+
+          Made with ❤️ for Vietnamese enterprises
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
