@@ -51,63 +51,52 @@ VIAddVersionKey "LegalCopyright" "Copyright © 2024 ${APP_PUBLISHER}"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 
 ;=================================
-; Welcome Page Configuration
+; Language & Pages
 ;=================================
-!define MUI_WELCOMEPAGE_TITLE "Chào mừng đến với ${APP_NAME} ${APP_VERSION}"
-!define MUI_WELCOMEPAGE_TEXT "Trình hướng dẫn này sẽ cài đặt ${APP_NAME} trên máy tính của bạn.$\r$\n$\r$\n${APP_DESCRIPTION}$\r$\n$\r$\nNhấn Tiếp tục để bắt đầu cài đặt."
+!define MUI_LANGDLL_REGISTRY_ROOT "HKLM"
+!define MUI_LANGDLL_REGISTRY_KEY "Software\${APP_DIR_NAME}"
+!define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
-;=================================
-; Directory Page Configuration
-;=================================
-!define MUI_DIRECTORYPAGE_TEXT_TOP "Chọn thư mục cài đặt ${APP_NAME}."
-!define MUI_DIRECTORYPAGE_TEXT_DESTINATION "Thư mục đích"
-
-;=================================
-; Install Files Page Configuration
-;=================================
-!define MUI_INSTFILESPAGE_FINISHHEADER_TEXT "Cài đặt hoàn thành"
-!define MUI_INSTFILESPAGE_FINISHHEADER_SUBTEXT "${APP_NAME} đã được cài đặt thành công."
-
-;=================================
-; Finish Page Configuration
-;=================================
-!define MUI_FINISHPAGE_TITLE "Hoàn thành cài đặt ${APP_NAME}"
-!define MUI_FINISHPAGE_TEXT "${APP_NAME} đã được cài đặt thành công trên máy tính của bạn.$\r$\n$\r$\nNhấn Hoàn thành để đóng trình hướng dẫn."
-!define MUI_FINISHPAGE_RUN "$INSTDIR\${APP_EXE_NAME}"
-!define MUI_FINISHPAGE_RUN_TEXT "Chạy ${APP_NAME}"
-!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README.txt"
-!define MUI_FINISHPAGE_SHOWREADME_TEXT "Xem hướng dẫn sử dụng"
-
-;=================================
-; Pages
-;=================================
+; Installer pages
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "resources\license.txt"
+!insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 
+; Uninstaller pages
 !insertmacro MUI_UNPAGE_WELCOME
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
 
-;=================================
 ; Languages
-;=================================
-!insertmacro MUI_LANGUAGE "Vietnamese"
 !insertmacro MUI_LANGUAGE "English"
+!insertmacro MUI_LANGUAGE "Vietnamese"
 
 ;=================================
-; Installation Section
+; Custom Language Strings
 ;=================================
-Section "Core Files" SecCore
+LangString PAGE_TITLE ${LANG_ENGLISH} "Enterprise Data Collector Setup"
+LangString PAGE_TITLE ${LANG_VIETNAMESE} "Cài đặt Enterprise Data Collector"
+
+LangString PAGE_SUBTITLE ${LANG_ENGLISH} "Install Enterprise Data Collector v${APP_VERSION}"
+LangString PAGE_SUBTITLE ${LANG_VIETNAMESE} "Cài đặt Enterprise Data Collector v${APP_VERSION}"
+
+LangString WELCOME_TEXT ${LANG_ENGLISH} "This wizard will guide you through the installation of ${APP_NAME}.$\r$\n$\r$\nIt is recommended that you close all other applications before starting Setup."
+LangString WELCOME_TEXT ${LANG_VIETNAMESE} "Trình hướng dẫn này sẽ giúp bạn cài đặt ${APP_NAME}.$\r$\n$\r$\nKhuyến nghị bạn nên đóng tất cả ứng dụng khác trước khi bắt đầu cài đặt."
+
+;=================================
+; Installer Sections
+;=================================
+Section "!Core Application" SecCore
     SectionIn RO
     
     SetOutPath "$INSTDIR"
     
-    ; Install main application files
-    File /r "..\dist\EnterpriseDataCollector\*.*"
+    ; Install main application executable (from PyInstaller --onefile)
+    File "..\dist\EnterpriseDataCollector.exe"
     
     ; Create application data directories
     CreateDirectory "$APPDATA\${APP_DIR_NAME}"
@@ -178,49 +167,45 @@ Function .onInit
     ; Uninstall previous version
     ExecWait '$0 /S _?=$INSTDIR'
     
-    done:
-        Goto +2
-    cancel:
-        Abort
-FunctionEnd
-
-Function .onInstSuccess
-    ; Open readme file option
-    MessageBox MB_YESNO "Cài đặt hoàn thành! Bạn có muốn mở hướng dẫn sử dụng không?" IDNO end
-    ExecShell "open" "$INSTDIR\README.txt"
-    end:
+cancel:
+    Abort
+    
+done:
+    ; Display language selection dialog
+    !insertmacro MUI_LANGDLL_DISPLAY
 FunctionEnd
 
 ;=================================
 ; Uninstaller Section
 ;=================================
 Section "Uninstall"
-    ; Remove application files
-    RMDir /r "$INSTDIR"
+    ; Remove files
+    Delete "$INSTDIR\${APP_EXE_NAME}"
+    Delete "$INSTDIR\README.txt"
+    Delete "$INSTDIR\license.txt"
+    Delete "$INSTDIR\${APP_UNINSTALLER}"
+    
+    ; Remove directories
+    RMDir "$INSTDIR"
     
     ; Remove shortcuts
     Delete "$DESKTOP\${APP_NAME}.lnk"
-    RMDir /r "$SMPROGRAMS\${APP_DIR_NAME}"
+    Delete "$SMPROGRAMS\${APP_DIR_NAME}\${APP_NAME}.lnk"
+    Delete "$SMPROGRAMS\${APP_DIR_NAME}\Gỡ cài đặt.lnk"
+    Delete "$SMPROGRAMS\${APP_DIR_NAME}\Website.url"
+    RMDir "$SMPROGRAMS\${APP_DIR_NAME}"
     
-    ; Remove registry entries
+    ; Remove registry keys
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_DIR_NAME}"
     DeleteRegKey HKLM "Software\${APP_DIR_NAME}"
     
-    ; Ask user if they want to remove user data
-    MessageBox MB_YESNO "Bạn có muốn xóa dữ liệu người dùng (Database, Logs, Outputs) không?" IDNO skip_userdata
+    ; Note: User data in $APPDATA is preserved unless user specifically requests removal
+    MessageBox MB_YESNO "Bạn có muốn xóa dữ liệu người dùng (Database, Outputs, Logs) không?" IDNO skip_userdata
     RMDir /r "$APPDATA\${APP_DIR_NAME}"
-    skip_userdata:
+    
+skip_userdata:
 SectionEnd
 
 Function un.onInit
-    MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 \
-        "Bạn có chắc chắn muốn gỡ cài đặt ${APP_NAME} không?" \
-        IDYES continue_uninstall
-    Abort
-    continue_uninstall:
-FunctionEnd
-
-Function un.onUninstSuccess
-    MessageBox MB_ICONINFORMATION|MB_OK \
-        "${APP_NAME} đã được gỡ cài đặt thành công khỏi máy tính của bạn."
+    !insertmacro MUI_LANGDLL_DISPLAY
 FunctionEnd
