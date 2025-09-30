@@ -237,8 +237,8 @@ class EnhancedIntegratedDataService:
                 # Get data from HSCTVN
                 hsctvn_data = await self.hsctvn_client.search_company(company.ma_so_thue)
                 
-                if hsctvn_data:
-                    # Integrate data
+                # Chỉ count success nếu có dữ liệu thực sự hữu ích
+                if hsctvn_data and self.hsctvn_client.has_meaningful_data(hsctvn_data):
                     company.integrate_hsctvn_data(hsctvn_data)
                     self.stats['hsctvn_success'] += 1
                     
@@ -247,8 +247,9 @@ class EnhancedIntegratedDataService:
                         self.stats['dual_source_success'] += 1
                     
                     self.logger.debug(f"HSCTVN data integrated: {company.ma_so_thue}")
+                    self.logger.info(f"HSCTVN data validated successfully for {company.ma_so_thue}")
                 else:
-                    self.logger.debug(f"No HSCTVN data found for: {company.ma_so_thue}")
+                    self.logger.warning(f"HSCTVN data validation failed for {company.ma_so_thue}")
                     
             except Exception as e:
                 self.logger.error(f"Error integrating HSCTVN data for {company.ma_so_thue}: {e}")
@@ -398,32 +399,30 @@ class EnhancedIntegratedDataService:
         except Exception as e:
             self.logger.error(f"Failed to get enhanced companies from database: {e}")
             return []
-    
-    def _parse_json_field(self, json_str: str) -> List[str]:
-        """Parse JSON string field safely"""
-        import json
+
+    def _parse_json_field(self, json_string: str) -> List[str]:
+        """Parse JSON string to list, handling errors"""
+        if not json_string:
+            return []
         try:
-            if json_str and json_str.strip():
-                return json.loads(json_str)
-        except:
-            pass
-        return []
-    
-    def _parse_datetime(self, dt_str: str) -> Optional[datetime]:
-        """Parse datetime string safely"""
-        try:
-            if dt_str:
-                return datetime.fromisoformat(dt_str.replace('Z', '+00:00'))
-        except:
-            pass
+            return json.loads(json_string)
+        except json.JSONDecodeError:
+            self.logger.warning(f"Invalid JSON string for nganh_nghe_khac: {json_string}")
+            return []
+
+    def _parse_datetime(self, dt_string: Optional[str]) -> Optional[datetime]:
+        """
+        Parse datetime string to datetime object.
+        Handles multiple formats and None values.
+        """
+        if not dt_string:
+            return None
+        for fmt in ["%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%d %H:%M:%S.%f"]:
+            try:
+                return datetime.strptime(dt_string, fmt)
+            except ValueError:
+                continue
+        self.logger.warning(f"Could not parse datetime string: {dt_string}")
         return None
-    
-    def get_collection_stats(self) -> Dict[str, Any]:
-        """Get current collection statistics"""
-        return self.stats.copy()
-    
-    def close(self):
-        """Cleanup resources"""
-        if hasattr(self, 'api_client'):
-            self.api_client.close()
-        self.logger.info("EnhancedIntegratedDataService closed")
+
+
