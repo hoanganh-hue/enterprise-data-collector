@@ -13,7 +13,7 @@ import json
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from ..models import (
+from models import (
     City, District, Ward, Industry, CompanySearchResult, CompanyDetail,
     ApiResponse, PaginatedResponse
 )
@@ -51,7 +51,7 @@ class ThongTinDoanhNghiepAPIClient:
             rate_limit_delay: Delay giữa các requests (seconds)
             logger: Logger instance
         """
-        self.base_url = base_url.rstrip('/')
+        self.base_url = base_url.rstrip("/")
         self.timeout = timeout
         self.rate_limit_delay = rate_limit_delay
         self.logger = logger or logging.getLogger(__name__)
@@ -73,10 +73,10 @@ class ThongTinDoanhNghiepAPIClient:
         
         # Default headers
         self.session.headers.update({
-            'User-Agent': 'EnterpriseDataCollector/2.0 (thongtindoanhnghiep.co API Client)',
-            'Accept': 'application/json',
-            'Accept-Encoding': 'gzip, deflate',
-            'Connection': 'keep-alive'
+            "User-Agent": "EnterpriseDataCollector/2.0 (thongtindoanhnghiep.co API Client)",
+            "Accept": "application/json",
+            "Accept-Encoding": "gzip, deflate",
+            "Connection": "keep-alive"
         })
         
         # Cache cho dữ liệu ít thay đổi
@@ -167,19 +167,19 @@ class ThongTinDoanhNghiepAPIClient:
             List of City objects
         """
         try:
-            data = self._make_request('/api/city', use_cache=use_cache, cache_ttl=86400)  # 24h cache
+            data = self._make_request("/api/city", use_cache=use_cache, cache_ttl=86400)  # 24h cache
             
             cities = []
             # API returns {"LtsItem": [...], "TotalDoanhNghiep": ...}
-            items = data.get('LtsItem', [])
+            items = data.get("LtsItem", [])
             if isinstance(items, list):
                 for item in items:
                     city = City(
-                        id=item.get('ID', 0),
-                        name=item.get('Title', ''),
-                        slug=item.get('SolrID', '').lstrip('/'),  # Remove leading slash
-                        code=item.get('code'),
-                        type=item.get('Type')
+                        id=item.get("ID", 0),
+                        name=item.get("Title", ""),
+                        slug=item.get("SolrID", "").lstrip("/"),  # Remove leading slash
+                        code=item.get("code"),
+                        type=item.get("Type")
                     )
                     cities.append(city)
             
@@ -202,14 +202,14 @@ class ThongTinDoanhNghiepAPIClient:
             City object hoặc None nếu không tìm thấy
         """
         try:
-            data = self._make_request(f'/api/city/{city_id}', use_cache=use_cache)
+            data = self._make_request(f"/api/city/{city_id}", use_cache=use_cache)
             
             return City(
-                id=data.get('id', city_id),
-                name=data.get('name', ''),
-                slug=data.get('slug', ''),
-                code=data.get('code'),
-                type=data.get('type')
+                id=data.get("id", city_id),
+                name=data.get("name", ""),
+                slug=data.get("slug", ""),
+                code=data.get("code"),
+                type=data.get("type")
             )
             
         except Exception as e:
@@ -228,18 +228,18 @@ class ThongTinDoanhNghiepAPIClient:
             List of District objects
         """
         try:
-            data = self._make_request(f'/api/city/{city_id}/district', use_cache=use_cache)
+            data = self._make_request(f"/api/city/{city_id}/district", use_cache=use_cache)
             
             districts = []
             if isinstance(data, list):
                 for item in data:
                     district = District(
-                        id=item.get('id', 0),
-                        name=item.get('name', ''),
-                        slug=item.get('slug', ''),
+                        id=item.get("id", 0),
+                        name=item.get("name", ""),
+                        slug=item.get("slug", ""),
                         city_id=city_id,
-                        code=item.get('code'),
-                        type=item.get('type')
+                        code=item.get("code"),
+                        type=item.get("type")
                     )
                     districts.append(district)
             
@@ -262,15 +262,15 @@ class ThongTinDoanhNghiepAPIClient:
             District object hoặc None nếu không tìm thấy
         """
         try:
-            data = self._make_request(f'/api/district/{district_id}', use_cache=use_cache)
+            data = self._make_request(f"/api/district/{district_id}", use_cache=use_cache)
             
             return District(
-                id=data.get('id', district_id),
-                name=data.get('name', ''),
-                slug=data.get('slug', ''),
-                city_id=data.get('city_id', 0),
-                code=data.get('code'),
-                type=data.get('type')
+                id=data.get("id", district_id),
+                name=data.get("name", ""),
+                slug=data.get("slug", ""),
+                city_id=data.get("city_id", 0),
+                code=data.get("code"),
+                type=data.get("type")
             )
             
         except Exception as e:
@@ -289,18 +289,18 @@ class ThongTinDoanhNghiepAPIClient:
             List of Ward objects
         """
         try:
-            data = self._make_request(f'/api/district/{district_id}/ward', use_cache=use_cache)
+            data = self._make_request(f"/api/district/{district_id}/ward", use_cache=use_cache)
             
             wards = []
             if isinstance(data, list):
                 for item in data:
                     ward = Ward(
-                        id=item.get('id', 0),
-                        name=item.get('name', ''),
-                        slug=item.get('slug', ''),
+                        id=item.get("id", 0),
+                        name=item.get("name", ""),
+                        slug=item.get("slug", ""),
                         district_id=district_id,
-                        code=item.get('code'),
-                        type=item.get('type')
+                        code=item.get("code"),
+                        type=item.get("type")
                     )
                     wards.append(ward)
             
@@ -323,15 +323,15 @@ class ThongTinDoanhNghiepAPIClient:
             Ward object hoặc None nếu không tìm thấy
         """
         try:
-            data = self._make_request(f'/api/ward/{ward_id}', use_cache=use_cache)
+            data = self._make_request(f"/api/ward/{ward_id}", use_cache=use_cache)
             
             return Ward(
-                id=data.get('id', ward_id),
-                name=data.get('name', ''),
-                slug=data.get('slug', ''),
-                district_id=data.get('district_id', 0),
-                code=data.get('code'),
-                type=data.get('type')
+                id=data.get("id", ward_id),
+                name=data.get("name", ""),
+                slug=data.get("slug", ""),
+                district_id=data.get("district_id", 0),
+                code=data.get("code"),
+                type=data.get("type")
             )
             
         except Exception as e:
@@ -351,16 +351,16 @@ class ThongTinDoanhNghiepAPIClient:
             List of Industry objects
         """
         try:
-            data = self._make_request('/api/industry', use_cache=use_cache, cache_ttl=86400)  # 24h cache
+            data = self._make_request("/api/industry", use_cache=use_cache, cache_ttl=86400)  # 24h cache
             
             industries = []
             # API returns {"LtsItem": [...], "TotalItem": ..., "TotalNganhNghe": ...}
-            items = data.get('LtsItem', [])
+            items = data.get("LtsItem", [])
             if isinstance(items, list):
                 for item in items:
                     # Determine parent based on level structure
                     parent_id = None
-                    level_codes = [item.get('Lv1'), item.get('Lv2'), item.get('Lv3'), item.get('Lv4'), item.get('Lv5')]
+                    level_codes = [item.get("Lv1"), item.get("Lv2"), item.get("Lv3"), item.get("Lv4"), item.get("Lv5")]
                     # Filter out empty levels
                     level_codes = [code for code in level_codes if code and code.strip()]
                     # If it's not a top-level industry (has more than just Lv1), it has a parent
@@ -369,9 +369,9 @@ class ThongTinDoanhNghiepAPIClient:
                         parent_id = 1  # Placeholder
                     
                     industry = Industry(
-                        id=item.get('ID', 0),
-                        name=item.get('Title', ''),
-                        slug=item.get('SolrID', '').lstrip('/'),  # Remove leading slash
+                        id=item.get("ID", 0),
+                        name=item.get("Title", ""),
+                        slug=item.get("SolrID", "").lstrip("/"),  # Remove leading slash
                         code=level_codes[-1] if level_codes else None,  # Use the most specific level
                         parent_id=parent_id
                     )
@@ -410,41 +410,41 @@ class ThongTinDoanhNghiepAPIClient:
         
         # Build parameters
         params = {
-            'p': page,
-            'r': page_size
+            "p": page,
+            "r": page_size
         }
         
         if location_slug:
-            params['l'] = location_slug
+            params["l"] = location_slug
         if keyword:
-            params['k'] = keyword
+            params["k"] = keyword
         if industry_slug:
-            params['i'] = industry_slug
+            params["i"] = industry_slug
         
         try:
-            data = self._make_request('/api/company', params=params)
+            data = self._make_request("/api/company", params=params)
             
             # Parse company list
             companies = []
             # API returns structure with LtsItems array (updated structure)
-            company_list = data.get('LtsItems', data.get('LtsDoanhNghiep', []))
+            company_list = data.get("LtsItems", data.get("LtsDoanhNghiep", []))
             if isinstance(company_list, list):
                 for item in company_list:
                     company = CompanySearchResult(
-                        ma_so_thue=item.get('MaSoThue', ''),
-                        ten_cong_ty=item.get('Title', ''),
-                        dia_chi=item.get('DiaChiCongTy', ''),
-                        tinh_trang=item.get('TrangThaiHoatDong', ''),
-                        slug=item.get('SolrID', ''),
-                        ngay_cap=item.get('NgayCap'),
-                        nganh_nghe=item.get('NganhNgheTitle')
+                        ma_so_thue=item.get("MaSoThue", ""),
+                        ten_cong_ty=item.get("Title", ""),
+                        dia_chi=item.get("DiaChiCongTy", ""),
+                        tinh_trang=item.get("TrangThaiHoatDong", ""),
+                        slug=item.get("SolrID", ""),
+                        ngay_cap=item.get("NgayCap"),
+                        nganh_nghe=item.get("NganhNgheTitle")
                     )
                     companies.append(company)
             
             # Get pagination info from Option object
-            option = data.get('Option', {})
-            total_count = option.get('TotalRow', len(companies))
-            current_page = option.get('CurrentPage', page)
+            option = data.get("Option", {})
+            total_count = option.get("TotalRow", len(companies))
+            current_page = option.get("CurrentPage", page)
             
             response = PaginatedResponse.from_api_data(
                 items=companies,
@@ -458,113 +458,101 @@ class ThongTinDoanhNghiepAPIClient:
             
         except Exception as e:
             self.logger.error(f"Failed to search companies: {e}")
-            return PaginatedResponse.from_api_data([], page, page_size, 0)
-    
-    def get_company_detail(self, tax_code: str) -> Optional[CompanyDetail]:
+            return PaginatedResponse(items=[], page=page, page_size=page_size, total_count=0)
+
+    def get_company_detail(self, slug: str) -> Optional[CompanyDetail]:
         """
-        Lấy thông tin chi tiết công ty theo mã số thuế
-        
+        Lấy thông tin chi tiết của một công ty theo slug
+
         Args:
-            tax_code: Mã số thuế của công ty
-            
+            slug: Slug của công ty (ví dụ: "cong-ty-tnhh-abc-com-12345")
+
         Returns:
             CompanyDetail object hoặc None nếu không tìm thấy
         """
         try:
-            data = self._make_request(f'/api/company/{tax_code}')
-            
-            company = CompanyDetail.from_api_response(data)
-            self.logger.info(f"Retrieved company details for {tax_code}")
-            return company
-            
-        except Exception as e:
-            self.logger.error(f"Failed to get company details for {tax_code}: {e}")
-            return None
-    
-    # =================== BATCH OPERATIONS ===================
-    
-    def get_companies_by_location_and_industry(
-        self,
-        location_slug: str,
-        industry_slug: str,
-        max_results: Optional[int] = None,
-        page_size: int = 50
-    ) -> List[CompanyDetail]:
-        """
-        Lấy tất cả công ty theo địa lý và ngành nghề (với batch processing)
-        
-        Args:
-            location_slug: Slug địa lý
-            industry_slug: Slug ngành nghề  
-            max_results: Giới hạn số kết quả (None = không giới hạn)
-            page_size: Số kết quả mỗi page
-            
-        Returns:
-            List of CompanyDetail objects
-        """
-        companies = []
-        page = 1
-        
-        self.logger.info(f"Starting batch collection for {location_slug} + {industry_slug}")
-        
-        while True:
-            # Search companies
-            search_result = self.search_companies(
-                location_slug=location_slug,
-                industry_slug=industry_slug,
-                page=page,
-                page_size=page_size
+            data = self._make_request(f"/api/company/{slug}")
+
+            # API trả về trực tiếp CompanyDetail
+            company_detail = CompanyDetail(
+                ma_so_thue=data.get("MaSoThue", ""),
+                ten_cong_ty=data.get("Title", ""),
+                dia_chi_thue=data.get("DiaChiCongTy", ""),
+                dai_dien_phap_luat=data.get("DaiDienPhapLuat", ""),
+                dien_thoai=data.get("DienThoai", ""),
+                email=data.get("Email", ""),
+                ngay_cap=data.get("NgayCap"),
+                nganh_nghe_chinh=data.get("NganhNgheChinh", ""),
+                nganh_nghe_kinh_doanh_chi_tiet=data.get("NganhNgheKinhDoanhChiTiet", []), # List of strings
+                trang_thai=data.get("TrangThaiHoatDong", ""),
+                cap_nhat_lan_cuoi=data.get("CapNhatLanCuoi"),
+                slug=data.get("SolrID", "")
             )
-            
-            if not search_result.items:
-                break
-            
-            # Get details for each company
-            for company_summary in search_result.items:
-                if max_results and len(companies) >= max_results:
-                    break
-                    
-                detail = self.get_company_detail(company_summary.ma_so_thue)
-                if detail:
-                    companies.append(detail)
-                    
-                # Rate limiting
-                time.sleep(self.rate_limit_delay)
-            
-            # Check if we should continue
-            if max_results and len(companies) >= max_results:
-                break
-            
-            if not search_result.has_next:
-                break
-                
-            page += 1
-            self.logger.info(f"Processed page {page-1}, collected {len(companies)} companies so far")
-        
-        self.logger.info(f"Batch collection completed: {len(companies)} companies")
-        return companies
-    
-    # =================== UTILITY METHODS ===================
-    
-    def clear_cache(self):
-        """Clear internal cache"""
-        self._cache.clear()
-        self.logger.info("Cache cleared")
-    
-    def get_cache_stats(self) -> Dict[str, int]:
-        """Get cache statistics"""
-        return {
-            'cache_size': len(self._cache),
-            'cache_keys': list(self._cache.keys())
-        }
-    
-    def close(self):
-        """Close session and cleanup"""
-        self.session.close()
-        self.logger.info("API client closed")
-    
-    def __enter__(self):
-        return self
-    
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close()
+
+            self.logger.info(f"Retrieved detail for company {slug}")
+            return company_detail
+
+        except Exception as e:
+            self.logger.error(f"Failed to get company detail for {slug}: {e}")
+            return None
+
+    def get_company_by_tax_code(self, tax_code: str) -> Optional[CompanyDetail]:
+        """
+        Tìm kiếm thông tin chi tiết công ty theo mã số thuế.
+        Sử dụng search_companies để tìm slug, sau đó dùng get_company_detail.
+
+        Args:
+            tax_code: Mã số thuế của công ty
+
+        Returns:
+            CompanyDetail object hoặc None nếu không tìm thấy
+        """
+        try:
+            # Tìm kiếm công ty theo mã số thuế
+            search_results = self.search_companies(keyword=tax_code, page_size=1)
+
+            if search_results.items:
+                # Lấy slug của công ty đầu tiên tìm được
+                company_slug = search_results.items[0].slug
+                if company_slug:
+                    return self.get_company_detail(company_slug)
+                else:
+                    self.logger.warning(f"No slug found for tax code {tax_code}")
+                    return None
+            else:
+                self.logger.info(f"No company found for tax code {tax_code}")
+                return None
+
+        except Exception as e:
+            self.logger.error(f"Failed to get company by tax code {tax_code}: {e}")
+            return None
+
+
+# Example Usage (for testing purposes)
+async def main():
+    logging.basicConfig(level=logging.INFO)
+    client = ThongTinDoanhNghiepAPIClient()
+
+    # Test get_cities
+    cities = client.get_cities()
+    print(f"Cities: {[c.name for c in cities[:5]]}...")
+
+    # Test search_companies
+    search_results = client.search_companies(keyword="FPT", page_size=5)
+    print(f"FPT Companies: {[c.ten_cong_ty for c in search_results.items]}")
+
+    # Test get_company_by_tax_code
+    tax_code = "0100109106"
+    company_detail = client.get_company_by_tax_code(tax_code)
+    if company_detail:
+        print(f"\nCompany Detail for {tax_code}:")
+        print(f"  Name: {company_detail.ten_cong_ty}")
+        print(f"  Address: {company_detail.dia_chi_thue}")
+        print(f"  Phone: {company_detail.dien_thoai}")
+        print(f"  Legal Rep: {company_detail.dai_dien_phap_luat}")
+    else:
+        print(f"\nCompany with tax code {tax_code} not found.")
+
+if __name__ == "__main__":
+    asyncio.run(main())
+

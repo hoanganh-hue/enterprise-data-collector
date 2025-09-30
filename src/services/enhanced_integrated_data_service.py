@@ -241,11 +241,9 @@ class EnhancedIntegratedDataService:
                 if hsctvn_data and self.hsctvn_client.has_meaningful_data(hsctvn_data):
                     company.integrate_hsctvn_data(hsctvn_data)
                     self.stats['hsctvn_success'] += 1
-                    
                     # Count as dual source if both sources have data
                     if company.data_source == "dual":
                         self.stats['dual_source_success'] += 1
-                    
                     self.logger.debug(f"HSCTVN data integrated: {company.ma_so_thue}")
                     self.logger.info(f"HSCTVN data validated successfully for {company.ma_so_thue}")
                 else:
